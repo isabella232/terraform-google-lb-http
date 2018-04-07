@@ -83,3 +83,13 @@ variable certificate_link {
   description = "self_link for an existing certificate to use in this load balancer."
   default     = ""
 }
+
+variable reserved_ip_address {
+  description = "an existing, reserved IP address to use"
+  default     = ""
+}
+
+variable ssl_only {
+  description = "guess"
+  default     = false
+}
