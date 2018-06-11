@@ -19,9 +19,9 @@ resource "google_compute_global_forwarding_rule" "http" {
   name       = "${var.name}"
   count      = "${var.ssl_only ? 0 : 1}"
   target     = "${google_compute_target_http_proxy.default.self_link}"
-  ip_address = "${element(compact(concat(list(var.reserved_ip_address), google_compute_global_address.default.address)), 0)}"
+  ip_address = "${google_compute_global_address.default.address}"
   port_range = "80"
-  # depends_on = ["google_compute_global_address.default"]
+  depends_on = ["google_compute_global_address.default"]
 }
 
 resource "google_compute_global_forwarding_rule" "https" {
@@ -29,17 +29,14 @@ resource "google_compute_global_forwarding_rule" "https" {
   count      = "${var.ssl ? 1 : 0}"
   name       = "${var.name}-https"
   target     = "${google_compute_target_https_proxy.default.self_link}"
-  ip_address = "${element(compact(concat(list(var.reserved_ip_address), google_compute_global_address.default.*.address)), 0)}"
+  ip_address = "${google_compute_global_address.default.address}"
   port_range = "443"
-  # depends_on = ["google_compute_global_address.default"]
+  depends_on = ["google_compute_global_address.default"]
 }
 
 resource "google_compute_global_address" "default" {
   project = "${var.project}"
   name    = "${var.name}-address"
-  # This causes the element/compact/concat/list dance in the forwarding rules
-  # above to fail when reserved_ip_address is passed in
-  # count   = "${var.reserved_ip_address == "" ? 1 : 0}"
 }
 
 # HTTP proxy when ssl is false

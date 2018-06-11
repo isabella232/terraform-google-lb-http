@@ -84,11 +84,6 @@ variable certificate_link {
   default     = ""
 }
 
-variable reserved_ip_address {
-  description = "an existing, reserved IP address to use"
-  default     = ""
-}
-
 variable ssl_only {
   description = "guess"
   default     = false
