@@ -85,6 +85,6 @@ variable certificate_link {
 }
 
 variable ssl_only {
-  description = "guess"
-  default     = false
+  description = "Set to `false` to enable HTTP load balancing"
+  default     = true
 }

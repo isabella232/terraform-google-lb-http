@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+//
+// Remember: ingress HTTP traffic is disabled by default
 resource "google_compute_global_forwarding_rule" "http" {
   project    = "${var.project}"
   name       = "${var.name}"
@@ -90,11 +92,18 @@ resource "google_compute_http_health_check" "default" {
   port         = "${element(split(",", element(var.backend_params, count.index)), 2)}"
 }
 
+// FIXME  Two count entries provided.  I suspect this is supposed to be an
+//        MxN expansion to get one rule to permit each of the backend ports
+//        access on each of the firewall_networks.  But that doesn't appear
+//        to be what's happening.
+//
+//        rtilder    Tue Jun 12 19:59:53 UTC 2018
+//
 resource "google_compute_firewall" "default-hc" {
   count         = "${length(var.firewall_networks)}"
   project       = "${var.project}"
   count         = "${length(var.backend_params)}"
-  name          = "${var.name}-hc-${count.index}"
+  name          = "${var.name}-hc-fw-${count.index}"
   network       = "${element(var.firewall_networks, count.index)}"
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "209.85.152.0/22", "209.85.204.0/22"]
   target_tags   = ["${var.target_tags}"]
